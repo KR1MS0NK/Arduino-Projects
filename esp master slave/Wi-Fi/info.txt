@@ -1,0 +1,39 @@
+To create a master-slave connection between two ESP32 boards using a push button on the
+ master and an LED on the slave, you can use a simple and direct method like Serial 
+communication or a more sophisticated wireless approach like Wi-Fi or Bluetooth. 
+Here, I'll provide an example using Wi-Fi, where the master ESP32 will send commands to 
+the slave ESP32 over a local Wi-Fi network.
+
+Master ESP32 (Push Button)
+The master ESP32 reads the state of a push button and sends a command to the slave ESP32 
+over Wi-Fi using HTTP requests.
+
+Libraries Needed:
+
+WiFi.h - for connecting to the Wi-Fi network
+HTTPClient.h - for sending HTTP requests
+
+Slave ESP32 (LED)
+The slave ESP32 sets up a simple web server. When it receives a command from the master, 
+it turns an LED on or off accordingly.
+
+Libraries Needed:
+
+WiFi.h - for connecting to the Wi-Fi network
+WebServer.h - for setting up the web server
+
+
+
+Instructions:
+
+Replace "YOUR_SSID" and "YOUR_PASSWORD" with your Wi-Fi network credentials.
+
+Set the buttonPin and ledPin to the correct GPIOs you are using.
+
+Replace "http://192.168.1.XXX/" in the master code with the IP address of the ESP32 running 
+the slave code. You can find the slave ESP32's IP address in the Serial Monitor after it 
+connects to your Wi-Fi network.
+
+Upload the master code to one ESP32 and the slave code to the other. Ensure both ESP32s are 
+connected to the same Wi-Fi network for them to communicate. When you press the button on the 
+master ESP32, it sends a command to the slave ESP32, which then turns the LED on or off accordingly.

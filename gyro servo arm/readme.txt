@@ -1,0 +1,1 @@
+an mpu6050 controlled rbotic arm made of 3 servos. can be configured with various end effectors

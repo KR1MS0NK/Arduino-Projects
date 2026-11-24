@@ -1,0 +1,38 @@
+
+For a direct master-slave connection between two ESP32 boards without using Wi-Fi, you can 
+utilize the ESP-NOW protocol. ESP-NOW is a kind of connectionless communication protocol 
+developed by Espressif that allows multiple devices to communicate with each other without 
+needing a Wi-Fi network. This method is particularly useful for low-power, low-latency applications.
+
+
+Steps to Set Up ESP-NOW Communication
+
+Include the ESP-NOW library: This is usually part of the ESP32 SDK in the ESP-IDF or can be 
+accessed via the Arduino IDE.
+
+Initialize ESP-NOW on both devices: This involves setting up the ESP32 to use ESP-NOW and 
+registering callback functions to handle received data.
+
+Register peers: Each ESP32 must know the MAC address of the other to send messages directly.
+
+Send and receive data: Implement logic to send data from the master to the slave and optionally 
+acknowledge receipt.
+
+
+Steps to Run the Code
+
+Find the MAC Address of the Slave ESP32: Upload a simple sketch to the slave ESP32 that prints 
+its MAC address to the Serial Monitor. Replace slaveAddress in the master code with this MAC address.
+
+Upload the Master Code: Upload the first code snippet to the master ESP32.
+
+Upload the Slave Code: Upload the second code snippet to the slave ESP32.
+
+When you press the button on the master, it sends a message to the slave using ESP-NOW. 
+The slave then turns an LED on or off based on the message's content. This setup allows for 
+low-latency, efficient communication without the need for a Wi-Fi network.
+
+
+
+
+
