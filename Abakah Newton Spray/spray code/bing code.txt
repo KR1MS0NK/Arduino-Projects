@@ -1,0 +1,129 @@
+Okay, I will try to rewrite the code for esp32. Here is the revised code:
+
+```c
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <HX711.h>
+#include <ESP32Servo.h>
+#include <Servo.h> // Added servo library
+
+#define OLED_RESET -1  // Reset pin not used
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define SCREEN_ADDRESS 0x3C
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+HX711 scale;
+Servo myservo;
+
+const int loadCellDT = 5;   // HX711 DT pin
+const int loadCellSCK = 4;  // HX711 SCK pin
+const int servoPin = 13;    // Servo control pin
+const int potPin = A0;      // Potentiometer pin for adjusting press time
+unsigned long previousMillis = 0;
+unsigned long currentMillis = 0; // Declared currentMillis variable
+int dx_global = 0; // Renamed global dx variable to avoid conflict
+int pos = 0; // Declared pos variable
+int timer = 5;
+
+void disp(){
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  float dx_local = map(scale.get_units(),58 , 165, 0.0, 100.0); // Renamed local dx variable to avoid conflict
+  display.print("SPRAY LEVEL: ");
+  display.print(dx_local);
+  display.print(" percent");
+  display.println();
+  
+  if (scale.get_units()<=58){
+    dx_local=0;
+    }
+  else if (scale.get_units()>=165){
+    dx_local=100;
+    }
+  display.display();
+  
+}
+
+void spray(){
+    int pressTime = map(analogRead(potPin),0,1023,1,10); // Added variable for press time and mapped it to potentiometer value
+    const unsigned long presst = pressTime*60000;
+    if (currentMillis - previousMillis >= presst){
+      previousMillis = currentMillis;
+         for (pos = 0; pos <= 45; pos += 1) { // goes from 0 degrees to 180 degrees
+                    // in steps of 1 degree
+           myservo.write(pos);              // tell servo to go to position in variable 'pos'
+           delay(10);                       // waits 15 ms for the servo to reach the position
+         }
+         for (pos = 45; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+             myservo.write(pos);              // tell servo to go to position in variable 'pos'
+            delay(10);                       // waits 15 ms for the servo to reach the position
+         }
+      }
+    }
+
+void setup() {
+  
+   Serial.begin(115200); // Added serial communication for esp32
+  
+   WiFi.begin(ssid, password); // Added wifi connection for esp32
+  
+   while (WiFi.status() != WL_CONNECTED) { // Wait for wifi connection
+     delay(500);
+     Serial.print(".");
+   }
+
+   Serial.println("");
+   Serial.println("WiFi connected");
+   Serial.println("IP address: ");
+   Serial.println(WiFi.localIP()); // Print IP address
+  
+  
+   Wire.begin(); // Initialize the I2C communication for OLED display
+
+   display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS); // Initialize the OLED display
+   
+   display.clearDisplay();
+
+   // Set up text size and color
+   display.setTextSize(1);
+   display.setTextColor(WHITE);
+
+   // Initialize the load cell
+   scale.begin(loadCellDT, loadCellSCK);
+   scale.set_scale(-620);  // Adjust this value to calibrate the load cell
+   scale.tare();       // Set the current weight as the zero point
+
+   pinMode(potPin, INPUT); // Added pin mode for potentiometer
+
+   myservo.attach(servoPin);     // Initialize the servo motor
+  
+   myservo.write(0);     // Set the initial position of the servo motor
+   
+   // Clear the buffer.
+   display.clearDisplay();
+
+
+   // Display startup text
+   display.setTextSize(1);
+   display.setTextColor(WHITE);
+   display.setCursor(0,28);
+   display.println("IP ADRESS!");
+   display.display();
+   
+}
+
+void loop() {
+  
+ currentMillis = millis(); // Added currentMillis assignment
+  
+ disp();
+ 
+ spray();
+  
+}
+```
+
+I hope this code works better for you on esp32. If you need more help, just ask me. 😊
